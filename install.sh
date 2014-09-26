@@ -1,3 +1,5 @@
+#!/bin/bash
+
 function pause() {
     read -p "$*"
 }
@@ -23,15 +25,17 @@ function ask_path() {
     # returns: absolute path or default value
 
     path=$(ask "$1" "$2")
-    echo $(cd "$(dirname "$path")" && pwd)/$(basename "$path")
+
+    mkdir -p $path
+    echo $(cd $path; pwd)
 }
 
 server_name=$(ask "Web server domain name" "localhost")
 server_port=$(ask "Web server port" "8086")
 server_protocol=$(ask "Web server protocol" "http")
-web_logs_dir=$(ask_path "Web server logs folder" "/srv/smod_neologism/web_logs")
-db_dir=$(ask_path "Database data folder" "/srv/smod_neologism/db")
-db_logs_dir=$(ask_path "Database logs folder" "/srv/smod_neologism/db_logs")
+web_logs_dir=$(ask_path "Web server logs folder" "/srv/neologism/web_logs")
+db_dir=$(ask_path "Database data folder" "/srv/neologism/db")
+db_logs_dir=$(ask_path "Database logs folder" "/srv/neologism/db_logs")
 db_user=$(ask "Database username for ontology user" "ontology")
 db_pass=$(ask "Database password for ontology user" "password")
 db_admin_pass=$(ask "Database password for admin user" "password")
@@ -40,7 +44,7 @@ db_name=$(ask "Ontology database name" "ontology")
 echo "Server Settings:" > settings.txt
 echo ""  >> settings.txt
 echo "Web server admin username: admin" >> settings.txt
-echo "Web server admin password: password" >> settings.txt
+echo "Web server admin password: $db_admin_pass" >> settings.txt
 echo "Web server domain name: $server_name" >> settings.txt
 echo "Web server port: $server_port" >> settings.txt
 echo "Web server protocol: $server_protocol" >> settings.txt
@@ -57,8 +61,6 @@ echo
 echo "*** Setup settings saved in settings.txt ***"
 pause 'Press [Enter] key to continue...'
 
-mkdir -p $db_dir $db_logs_dir $web_logs_dir
-
 # we don't need the resulting containers as we are only
 # interested in the permanent changes made to $db_dir
 docker run --rm                                             \
@@ -72,7 +74,7 @@ docker run --rm                                             \
     tutum/mysql                                             \
     /bin/bash -c "/create_mysql_admin_user.sh"
 
-cp setup.sql /tmp/setup.sql
+wget -O /tmp/setup.sql https://raw.githubusercontent.com/SpazioDati/docker-neologism/master/setup.sql
 
 sed -i "s/{{db_user}}/$db_user/g" /tmp/setup.sql
 sed -i "s/{{db_pass}}/$db_pass/g" /tmp/setup.sql
@@ -87,16 +89,16 @@ docker run --rm                                             \
 
 # generate run script
 echo "# this script launches the two dockers \\" > run.sh
-echo "docker run -d --name='smod_neologism_db' \\" >> run.sh
+echo "docker run -d --name='neologism_db' \\" >> run.sh
 echo "    -p 127.0.0.1::3306 \\" >> run.sh
 echo "    -v '$db_dir':/var/lib/mysql \\" >> run.sh
 echo "    -v '$db_logs_dir':/var/log/mysql \\" >> run.sh
 echo "    -e MYSQL_PASS='$db_admin_pass' \\" >> run.sh
 echo "    tutum/mysql" >> run.sh
 echo "" >> run.sh
-echo "docker run -d --name='smod_neologism_web' \\" >> run.sh
-echo "    -h smod_neologism \\" >> run.sh
-echo "    --link smod_neologism_db:db \\" >> run.sh
+echo "docker run -d --name='neologism_web' \\" >> run.sh
+echo "    -h neologism \\" >> run.sh
+echo "    --link neologism_db:db \\" >> run.sh
 echo "    -p 0.0.0.0:$server_port:80 \\" >> run.sh
 echo "    -v '$web_logs_dir':/var/log/apache2 \\" >> run.sh
 echo "    -e SERVER_NAME='$server_name' \\" >> run.sh
