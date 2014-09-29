@@ -44,7 +44,7 @@ db_name=$(ask "Ontology database name" "ontology")
 echo "Server Settings:" > settings.txt
 echo ""  >> settings.txt
 echo "Web server admin username: admin" >> settings.txt
-echo "Web server admin password: $db_admin_pass" >> settings.txt
+echo "Web server admin password: password" >> settings.txt
 echo "Web server domain name: $server_name" >> settings.txt
 echo "Web server port: $server_port" >> settings.txt
 echo "Web server protocol: $server_protocol" >> settings.txt
@@ -76,9 +76,10 @@ docker run --rm                                             \
 
 wget -O /tmp/setup.sql https://raw.githubusercontent.com/SpazioDati/docker-neologism/master/setup.sql
 
-sed -i "s/{{db_user}}/$db_user/g" /tmp/setup.sql
-sed -i "s/{{db_pass}}/$db_pass/g" /tmp/setup.sql
-sed -i "s/{{db_name}}/$db_name/g" /tmp/setup.sql
+sed -i -e "s/{{db_user}}/$db_user/g" \
+       -e "s/{{db_pass}}/$db_pass/g" \
+       -e "s/{{db_name}}/$db_name/g" 
+       /tmp/setup.sql
 
 docker run --rm                                             \
     -v /tmp:/tmp                                            \
