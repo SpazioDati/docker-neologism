@@ -9,7 +9,7 @@ This docker will deploy a full installation of [neologism](https://www.drupal.or
 
 The script will ask you some configuration parameters before setting up a database for neologism. The current configuration will be saved to `settings.txt` and a script called `run.sh` will be created in the current directory for launching the two dockers (mysql + neologism).
 
-### Launching the dockers:
+### Launching the dockers
 First, the database needs to be launched:
 
     docker run -d --name='neologism_db'                     \
