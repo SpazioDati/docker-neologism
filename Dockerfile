@@ -3,7 +3,7 @@ FROM ubuntu:trusty
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -y install apache2 libapache2-mod-php5 php5-mysql php5-ldap php5-gd unzip
 
 ADD ./neologism.conf /etc/apache2/sites-available/neologism.conf
-ADD https://github.com/SpazioDati/Neologism/releases/download/0.5.4b/neologism.zip /tmp/neologism.zip
+ADD https://github.com/SpazioDati/Neologism/releases/download/0.5.4c/neologism.zip /tmp/neologism.zip
 RUN unzip /tmp/neologism.zip -d /tmp && mv /tmp/neologism /var/www/neologism
 
 ADD ./settings.php /var/www/neologism/sites/default/settings.php
