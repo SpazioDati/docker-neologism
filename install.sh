@@ -74,11 +74,17 @@ docker run --rm                                             \
     tutum/mysql                                             \
     /bin/bash -c "/create_mysql_admin_user.sh"
 
-wget -O /tmp/setup.sql https://raw.githubusercontent.com/SpazioDati/docker-neologism/master/setup.sql
+if [ -f ./setup.sql ]; then
+    echo "Using the database dump found in folder $(pwd)"
+    cp ./setup.sql /tmp/setup.sql
+else
+    echo "Downloading the database dump"
+    wget -O /tmp/setup.sql https://raw.githubusercontent.com/SpazioDati/docker-neologism/master/setup.sql
+fi
 
 sed -i -e "s/{{db_user}}/$db_user/g" \
        -e "s/{{db_pass}}/$db_pass/g" \
-       -e "s/{{db_name}}/$db_name/g" 
+       -e "s/{{db_name}}/$db_name/g" \
        /tmp/setup.sql
 
 docker run --rm                                             \

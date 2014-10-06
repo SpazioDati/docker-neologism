@@ -33,7 +33,7 @@ Then, launch the web server:
         -e DB_NAME='$db_name'                               \
         spaziodati/neologism
 
-If you followed the quick installation procedure: you were asked all of these parameters during the procedure itself, they have been saved to `settings.txt`; you can also use the script `run.sh` which will run the dockers with these parameters.
+**If you followed the quick installation procedure:** you were asked all of these parameters during the procedure itself, they have been saved to `settings.txt`; you can also use the script `run.sh` which will run the dockers with these parameters.
 
 
 ### Manual installation
