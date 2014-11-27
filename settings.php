@@ -89,8 +89,8 @@
  *   $db_url = 'pgsql://username:password@localhost/databasename';
  */
 
-$db_host = getenv("DB_PORT_3306_TCP_ADDR");
-$db_port = getenv("DB_PORT_3306_TCP_PORT");
+$db_host = "localhost";
+$db_port = "3306";
 $db_user = getenv("DB_USER");
 $db_pass = getenv("DB_PASS");
 $db_name = getenv("DB_NAME");
