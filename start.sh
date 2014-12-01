@@ -1,11 +1,8 @@
-#sed -i "s/__SERVER_NAME__/$SERVER_NAME/g" /etc/apache2/sites-available/neologism.conf
-#exec /etc/apache2/foreground.sh
-
-if [ -f /setup.sql ]; then
+if [[ ! -d /var/lib/mysql/mysql ]]; then
     export STARTUP_SQL=/setup.sql
     sed '$ d' /run.sh > /createdb.sh
-    chmod +x /createdb.sh && /createdb.sh
-    rm /setup.sql /createdb.sh
+    /bin/bash /createdb.sh
+    rm /createdb.sh
 fi
 
 source /etc/apache2/envvars && apache2
